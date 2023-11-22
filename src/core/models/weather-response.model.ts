@@ -1,10 +1,10 @@
 export interface ApiResponse {
   location: Location;
-  current: Current;
+  current: Current_Temp;
   forecast: Forecast;
 }
 
-export interface Current {
+export interface Current_Temp {
   last_updated_epoch: number;
   last_updated: string;
   temp_c: number;

@@ -1,4 +1,5 @@
-<div class="weather-app container d-flex align-content-center flex-column">
+<div class="weather-app container d-flex align-content-center flex-column justify-content-center">
+  
   <div class="app-header mt-2">
     <h1>Weather Forecast App</h1>
   </div>
@@ -12,37 +13,79 @@
     </div>
   </div>
 
-  <div class="div" *ngIf="data as cityForecast ">
-    <div class="current-temperature card text-center">
-      <div class="card-body">
-        <h2 class="card-title">{{cityForecast.location.name}} Current Temperature</h2>
-        <div class="d-flex justify-content-between align-items-center flex-column">
-          <h3 class=" mt-2">{{ currentTemperature }}°C</h3>
-          <div class="d-flex align-items-center">
-            <p class="">{{cityForecast.current.condition.text}}</p>
-            <img [src]="cityForecast.current.condition.icon" alt="Weather Icon" class="img-fluid">
+  @if(weatherForecastData$ | async  ; as cityForecast ){
+    @defer () {
+      <app-current-temp-view [cityForecast]="cityForecast"></app-current-temp-view>
+      <div class="weekly-forecast">
+        <h2 class="mb-4">Weekly Forecast</h2>
+        @for(dailyForecast of  cityForecast.forecast.forecastday ; track dailyForecast.date_epoch ) {
+          <div class="day-forecast card-deck ">
+            <app-daily-temp-view [dailyForecast]="dailyForecast"></app-daily-temp-view>
           </div>
-        </div>
+        } @empty {
+          <p> no data</p>
+        }
       </div>
-    </div>
-
+    }@loading(minimum 1s) {
+      <span>Loading...</span>
+      }
+  } @else {
+    <p>No forecast ready for this location !</p>
+  }
+  <!-- <div *ngIf="weatherForecastData$ | async  as cityForecast ; else noData">
+    <app-current-temp-view [cityForecast]="cityForecast"></app-current-temp-view>
     <div class="weekly-forecast">
       <h2 class="mb-4">Weekly Forecast</h2>
-      <div class="day-forecast card-deck" *ngFor="let item of weeklyForecast">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{item.date | date : "fullDate"}}</h5>
-            <div class="d-flex justify-content-between align-items-center">
-              <p class="card-text">Temperature: {{item.day.avgtemp_c}}°C</p>
-              <div class="d-flex align-items-center">
-                <p class="card-desc">{{item.day.condition.text}}</p>
-                <img [src]="item.day.condition.icon" alt="Weather Icon" class="img-fluid">
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div class="day-forecast card-deck" *ngFor="let dailyForecast of cityForecast.forecast.forecastday ; trackBy :trackByFn ">
+        <app-daily-temp-view [dailyForecast]="dailyForecast"></app-daily-temp-view>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- @if(weatherForecastData$ | async ; as cityForecast){
+  @defer (when !isLoading) {
+  <app-current-temp-view [cityForecast]="cityForecast"></app-current-temp-view>
+  <div class="weekly-forecast">
+    <h2 class="mb-4">Weekly Forecast</h2>
+    @for(dailyForecast of cityForecast.forecast.forecastday ; track dailyForecast){
+    <div class="day-forecast card-deck">
+      <app-daily-temp-view [dailyForecast]="dailyForecast"></app-daily-temp-view>
+    </div>
+    }@empty {
+    <p>No forecast available for this location !</p>
+    }
+  </div>
+  }
+  @placeholder {
+  <span>Weather data should be displayed here </span>
+  }
+  @error {
+  <span>An error occurred while retrieving data. Please try again </span>
+  }
+  @loading(minimum 1s) {
+  <span>Loading...</span>
+  }
+  } @else {
+  <p>No forecast ready for this location !</p>
+  } -->

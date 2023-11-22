@@ -1,0 +1,12 @@
+<div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{dailyForecast.date | date : "fullDate"}}</h5>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="card-text">Temperature: {{dailyForecast.day.avgtemp_c}}°C</p>
+        <div class="d-flex align-items-center">
+          <p class="card-desc">{{dailyForecast.day.condition.text}}</p>
+          <img [src]="dailyForecast.day.condition.icon" alt="Weather Icon" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule, NgFor, NgIf } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { WeatherService } from '../core/services/api.service';
-import { ApiResponse } from '../core/models/weather-response.model';
+import { ApiResponse, Forecast, Forecastday } from '../core/models/weather-response.model';
 import { FormsModule } from '@angular/forms';
+import { CurrentTempViewComponent } from './components/current-temp-view/current-temp-view.component';
+import { DailyTempViewComponent } from './components/daily-temp-view/daily-temp-view.component';
+import { Observable, finalize, tap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, FormsModule],
+  imports: [
+    AsyncPipe,
+    RouterOutlet,
+    FormsModule,
+    CurrentTempViewComponent,
+    DailyTempViewComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -17,6 +26,8 @@ export class AppComponent {
   weeklyForecast: any[] = [];
   city: string = 'cairo';
   data!: ApiResponse;
+  isLoading = false;
+  weatherForecastData$!: Observable<ApiResponse>;
 
   constructor(private weatherService: WeatherService) {}
 
@@ -31,12 +42,11 @@ export class AppComponent {
   }
 
   getWeatherData(city: string): void {
-    this.weatherService
+    this.isLoading = true;
+    this.weatherForecastData$ = this.weatherService
       .getWeatherForecast(city)
-      .subscribe((data: ApiResponse) => {
-        this.data = data;
-        this.currentTemperature = data.current.temp_c;
-        this.weeklyForecast = data.forecast.forecastday;
-      });
+      .pipe(finalize(() => this.isLoading = false) );
   }
+  
+
 }
